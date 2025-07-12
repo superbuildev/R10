@@ -696,22 +696,11 @@ const App = () => {
 
   // Enhanced Message Parser and Renderer
   const parseAndRenderAIResponse = (content) => {
-    // Clean up markdown formatting and bold important headings
-    const cleanContent = content
-      .replace(/\*\*\*(.*?)\*\*\*/g, '<strong>$1</strong>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/###\s*(.*?)(?=\n|$)/g, '<strong>$1</strong>')
-      .replace(/##\s*(.*?)(?=\n|$)/g, '<strong>$1</strong>')
-      .replace(/#{1,6}\s*(.*?)(?=\n|$)/g, '<strong>$1</strong>')
-      .replace(/\*\s*/g, '• ')
-      .replace(/(\d+\.\s*[A-Z][^.]*:)/g, '<strong>$1</strong>') // Bold numbered headings
-      .replace(/([A-Z][^.]*:)(?=\n|$)/g, '<strong>$1</strong>'); // Bold section headings
-
-    // Split content into sections
+    // Split content into sections first, before any markdown conversion
     const sections = [];
     let currentSection = { type: 'text', content: '' };
     
-    const lines = cleanContent.split('\n');
+    const lines = content.split('\n');
     let inCodeBlock = false;
     let codeContent = '';
     
@@ -775,7 +764,30 @@ const App = () => {
       sections.push(currentSection);
     }
     
-    return sections;
+    // Apply markdown to HTML conversion to each section's content
+    return sections.map(section => ({
+      ...section,
+      content: convertMarkdownToHTML(section.content)
+    }));
+  };
+
+  // Clean markdown to HTML conversion function
+  const convertMarkdownToHTML = (text) => {
+    return text
+      // Convert bold markdown to HTML
+      .replace(/\*\*\*(.*?)\*\*\*/g, '<strong>$1</strong>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      // Convert headers to bold
+      .replace(/###\s*(.*?)(?=\n|$)/g, '<strong>$1</strong>')
+      .replace(/##\s*(.*?)(?=\n|$)/g, '<strong>$1</strong>')
+      .replace(/#{1,6}\s*(.*?)(?=\n|$)/g, '<strong>$1</strong>')
+      // Convert bullet points
+      .replace(/^\*\s+(.*)$/gm, '• $1')
+      // Bold numbered headings and section headings
+      .replace(/(\d+\.\s*[A-Z][^.]*:)/g, '<strong>$1</strong>')
+      .replace(/^([A-Z][^.]*:)$/gm, '<strong>$1</strong>')
+      // Clean up any extra whitespace
+      .trim();
   };
 
   // Enhanced suggestion text processor
