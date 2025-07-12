@@ -414,6 +414,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ PASSED - CSV file upload interface working correctly. Upload button functional, file validation working, and sessions are created successfully after upload. Integration with backend upload API working properly."
+      - working: true
+        agent: "testing"
+        comment: "✅ UPLOAD ISSUE RESOLVED - Fixed critical backend dependency issues (patsy, autograd, formulaic, autograd_gamma, litellm) that were causing 502 Bad Gateway errors. CSV file upload now working perfectly: file uploads successfully (200 status), creates sessions properly, displays data preview with 10×6 dataset showing 100% data completeness, and all UI components functional. The 'failed to upload' error was due to backend service not starting properly, now completely resolved."
         
   - task: "Chat Interface with LLM"
     implemented: true
