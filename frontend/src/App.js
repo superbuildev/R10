@@ -253,6 +253,34 @@ const App = () => {
       return <TableRenderer content={content} title="Data Table" />;
     }
     
+    // Check if content looks like code or statistical output
+    const isCodeOrStatOutput = content.includes('import ') || 
+                              content.includes('def ') || 
+                              content.includes('print(') ||
+                              content.includes('plt.') ||
+                              content.includes('df.') ||
+                              content.includes('np.') ||
+                              content.includes('pd.') ||
+                              content.includes('>>>') ||
+                              content.includes('...') ||
+                              content.includes('Traceback') ||
+                              content.includes('Error:') ||
+                              content.includes('  File ') ||
+                              /^\s*\d+\.\d+\s+\d+\.\d+/.test(content) ||
+                              /^\s*[A-Za-z_]\w*\s*=/.test(content) ||
+                              content.includes('dtype:') ||
+                              content.includes('Index:') ||
+                              content.includes('[') && content.includes(']') && content.includes('dtype');
+    
+    if (isCodeOrStatOutput) {
+      // Render as plain text for code/statistical content
+      return (
+        <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700 font-mono">
+          {content.trim()}
+        </div>
+      );
+    }
+    
     return (
       <div 
         className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700"
