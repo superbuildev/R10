@@ -773,6 +773,27 @@ const App = () => {
 
   // Clean markdown to HTML conversion function
   const convertMarkdownToHTML = (text) => {
+    // Don't convert if the content looks like code, statistical output, or technical content
+    if (text.includes('import ') || 
+        text.includes('def ') || 
+        text.includes('print(') ||
+        text.includes('plt.') ||
+        text.includes('df.') ||
+        text.includes('np.') ||
+        text.includes('pd.') ||
+        text.includes('>>>') ||
+        text.includes('...') ||
+        text.includes('Traceback') ||
+        text.includes('Error:') ||
+        text.includes('  File ') ||
+        /^\s*\d+\.\d+\s+\d+\.\d+/.test(text) ||
+        /^\s*[A-Za-z_]\w*\s*=/.test(text) ||
+        text.includes('dtype:') ||
+        text.includes('Index:') ||
+        text.includes('[') && text.includes(']') && text.includes('dtype')) {
+      return text; // Return as-is for code/statistical content
+    }
+    
     return text
       // Convert bold markdown to HTML
       .replace(/\*\*\*(.*?)\*\*\*/g, '<strong>$1</strong>')
