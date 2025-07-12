@@ -764,10 +764,10 @@ const App = () => {
       sections.push(currentSection);
     }
     
-    // Apply markdown to HTML conversion to each section's content
+    // Apply markdown to HTML conversion only to non-code sections
     return sections.map(section => ({
       ...section,
-      content: convertMarkdownToHTML(section.content)
+      content: section.type === 'code' ? section.content : convertMarkdownToHTML(section.content)
     }));
   };
 
